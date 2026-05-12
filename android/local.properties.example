@@ -1,0 +1,5 @@
+# 复制本文件为 local.properties 后再构建 Android。
+# sdk.dir：Android SDK 目录（Windows 示例）
+sdk.dir=C:\\Users\\YOUR_USER\\AppData\\Local\\Android\\Sdk
+# Flutter SDK 根目录（执行 where flutter 得到 flutter.bat 后去掉 \\bin\\flutter.bat）
+flutter.sdk=C:\\Path\\To\\flutter

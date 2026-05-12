@@ -1,0 +1,478 @@
+{
+  "@@locale": "en",
+  "appTitle": "Portable OBS Console",
+  "tabHome": "Home",
+  "tabFeature": "Features",
+  "tabForm": "Forms",
+  "tabComm": "Comm",
+  "tabHelp": "Help",
+  "pageUnderDevelopment": "{tabName} — Page under development",
+  "@pageUnderDevelopment": {
+    "placeholders": {
+      "tabName": {
+        "type": "String"
+      }
+    }
+  },
+  "commonCancel": "Cancel",
+  "commonSave": "Save",
+  "commonConnect": "Connect",
+  "commonImport": "Import",
+  "commonYes": "Yes",
+  "commonNo": "No",
+  "homeWorkbench": "Workbench",
+  "homeCollectorStatus": "Collector status",
+  "homeSeismometerAttitude": "Seismometer attitude",
+  "homeInstrumentAttitude": "Instrument attitude",
+  "homeChamberTp": "Chamber temp & pressure",
+  "homePowerVoltage": "Power voltage",
+  "homeInstrumentClock": "Instrument clock",
+  "homeDataTransmission": "Telemetry",
+  "homeSwitchOn": "On",
+  "homeSwitchOff": "Off",
+  "homeActionRealtimeWave": "Realtime waveform",
+  "homeActionConfigFile": "Configuration",
+  "homeActionCommSettings": "Communication",
+  "homeActionCommLink": "Comm link",
+  "homeActionGps": "GPS",
+  "homeActionLockSwing": "Lock swing",
+  "homeActionUnlock": "Unlock",
+  "homeTagExternalPower": "External power",
+  "homeTagCharging": "Charging",
+  "homeTagAcousticRelease": "Acoustic release",
+  "homeTagClockInit": "Clock init",
+  "homeTagTimedRelease": "Timed release",
+  "homeTagDataLinkModule": "Data link module",
+  "homeTagGpsLock": "GPS lock",
+  "homeTagGpsSync": "GPS sync",
+  "homeTagCollectStart": "Acquisition start",
+  "homeTagSensorLock": "Sensor lock",
+  "homeTagFlashOn": "Flash on",
+  "homeTagGpsOn": "GPS on",
+  "homePitch": "Pitch",
+  "homeRoll": "Roll",
+  "homeHeading": "Heading",
+  "homeRefresh": "Refresh",
+  "homeAdjustAttitude": "Adjust attitude",
+  "homeStandardPressure": "Std pressure: {hpa} hPa",
+  "@homeStandardPressure": {
+    "placeholders": {
+      "hpa": {
+        "type": "String"
+      }
+    }
+  },
+  "homeChamberPressure": "Chamber pressure",
+  "homeChamberTemp": "Chamber temp",
+  "homeBatteryMain": "Main battery",
+  "homeBatteryBackup": "Backup battery",
+  "homeBatteryAcoustic": "Acoustic battery",
+  "homeDataLinkPort": "Telemetry port",
+  "homePcTime": "PC",
+  "homePtcTime": "PTC time",
+  "homeEvery": "Every",
+  "homeMinutesAutoRefresh": "min auto refresh",
+  "homeDataTxDetail": "Link: {link}\nGPS lock: {gps}\nLast refresh: {time}",
+  "@homeDataTxDetail": {
+    "placeholders": {
+      "link": {
+        "type": "String"
+      },
+      "gps": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "configPageTitle": "Configuration",
+  "configEditCard": "Edit configuration",
+  "configHintEditor": "Edit or view config (text or HEX)",
+  "configLinkStatus": "Link: ",
+  "configWifiConnected": "WiFi connected",
+  "configBtConnected": "Bluetooth connected",
+  "configDisconnected": "Disconnected",
+  "configOpStatus": "Status: {status}",
+  "@configOpStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "configStatusIdle": "Idle",
+  "configBtnDownload": "Download config",
+  "configBtnImport": "Import config",
+  "configBtnUpload": "Upload config",
+  "configBtnExport": "Export config",
+  "configDialogImportTitle": "Import configuration file",
+  "configDialogImportHint": "Enter path to .cfg file",
+  "configErrNoChannel": "No communication link. Connect in Comm first.",
+  "configErrConnectFirst": "Connect to device first",
+  "configErrEmptyContent": "Configuration is empty",
+  "configErrFileNotFound": "File not found: {path}",
+  "@configErrFileNotFound": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "configStatusDownloadOk": "Download OK: {bytes} bytes",
+  "@configStatusDownloadOk": {
+    "placeholders": {
+      "bytes": {
+        "type": "String"
+      }
+    }
+  },
+  "configStatusUploadOk": "Upload OK: {bytes} bytes",
+  "@configStatusUploadOk": {
+    "placeholders": {
+      "bytes": {
+        "type": "String"
+      }
+    }
+  },
+  "configStatusImportOk": "Import OK: {path}",
+  "@configStatusImportOk": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "configStatusExportOk": "Export OK: {path}",
+  "@configStatusExportOk": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "configStatusFail": "Failed: {error}",
+  "@configStatusFail": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "commPageTitle": "Communication",
+  "commModeTitle": "Mode",
+  "commWifi": "WiFi",
+  "commBluetooth": "Bluetooth",
+  "commPresetTitle": "Presets",
+  "commPresetHint": "Select preset to load",
+  "commSavePreset": "Save preset",
+  "commReconnectTitle": "Reconnect",
+  "commAutoReconnect": "Auto reconnect",
+  "commRetryCount": "Retries: {n}",
+  "@commRetryCount": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "commRetryInterval": "Interval: {sec}s",
+  "@commRetryInterval": {
+    "placeholders": {
+      "sec": {
+        "type": "String"
+      }
+    }
+  },
+  "commLinkDevice": "Connect device",
+  "commDisconnectDevice": "Disconnect",
+  "commSendStatusQuery": "Send CMD_GET_STATUS",
+  "commDeviceCommands": "Device commands",
+  "commLogTitle": "Log",
+  "commLogEmpty": "No logs",
+  "commCmdGpsOn": "GPS on",
+  "commCmdGpsOff": "GPS off",
+  "commCmdAdOn": "AD on",
+  "commCmdAdOff": "AD off",
+  "commCmdRdoOn": "Radio on",
+  "commCmdRdoOff": "Radio off",
+  "commCmdFlashOn": "Flash on",
+  "commCmdFlashOff": "Flash off",
+  "commDialogWifiTitle": "WiFi data channel",
+  "commDeviceIp": "Device IP",
+  "commPort": "Port",
+  "commDialogSavePresetTitle": "Save connection preset",
+  "commPresetName": "Preset name",
+  "commPresetWifiDefault": "WiFi preset-{ts}",
+  "@commPresetWifiDefault": {
+    "placeholders": {
+      "ts": {
+        "type": "String"
+      }
+    }
+  },
+  "commPresetBtDefault": "BT preset-{ts}",
+  "@commPresetBtDefault": {
+    "placeholders": {
+      "ts": {
+        "type": "String"
+      }
+    }
+  },
+  "commSnackPresetSaved": "Preset saved",
+  "commSnackReconnectSaved": "Reconnect settings saved",
+  "commSnackBtReady": "Bluetooth ready ({name})",
+  "@commSnackBtReady": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "commSnackConnectBtFirst": "Tap Connect on a device in the Bluetooth list first",
+  "commSnackWifiDisconnected": "WiFi channel disconnected",
+  "commSnackBtDisconnected": "Bluetooth disconnected",
+  "commSnackWifiConnected": "WiFi connected: {host}:{port}",
+  "@commSnackWifiConnected": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      },
+      "port": {
+        "type": "String"
+      }
+    }
+  },
+  "commSnackWifiFailed": "WiFi failed: {error}",
+  "@commSnackWifiFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "commSnackPresetLoaded": "Loaded preset: {name}",
+  "@commSnackPresetLoaded": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "commSnackPresetBtLoaded": "Loaded Bluetooth preset: {name}",
+  "@commSnackPresetBtLoaded": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "commSnackSendFailed": "Send failed: {error}",
+  "@commSnackSendFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "commSnackCmdSendFailed": "{title} failed: {error}",
+  "@commSnackCmdSendFailed": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "gpsPageTitle": "GPS",
+  "gpsNmeaType": "NMEA sentence type",
+  "gpsSendCommand": "Send command",
+  "gpsInfoCard": "GPS info",
+  "gpsMapPlaceholder": "Map area",
+  "gpsRowGfsdDate": "GFSD date",
+  "gpsRowUtc": "UTC time",
+  "gpsRowLon": "Longitude",
+  "gpsRowLat": "Latitude",
+  "gpsRowSpeed": "Speed (kn)",
+  "gpsRowSatsInUse": "Satellites in use",
+  "gpsRowSatsVisible": "Visible satellites",
+  "netErrGeneric": "Request failed",
+  "netErrTimeout": "Connection timed out",
+  "netErrSendTimeout": "Send timed out",
+  "netErrReceiveTimeout": "Receive timed out",
+  "netErrServer": "Server error {code}",
+  "@netErrServer": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "netErrNetwork": "Network error",
+  "wifiChartTitle": "Waveform",
+  "wifiSectionTitle": "WiFi",
+  "wifiConnectedTitle": "Connected WiFi",
+  "wifiTooltipRefresh": "Refresh",
+  "wifiCurrentNetwork": "Current network",
+  "wifiCurrentConnection": "Current connection",
+  "wifiPhoneNotConnected": "Phone not on WiFi",
+  "wifiUnknownNetwork": "Unknown network",
+  "wifiOpenNetwork": "Open network",
+  "wifiDialogConnectTitle": "Connect to {ssid}",
+  "@wifiDialogConnectTitle": {
+    "placeholders": {
+      "ssid": {
+        "type": "String"
+      }
+    }
+  },
+  "wifiPasswordHint": "WiFi password",
+  "wifiSnackEnterPassword": "Enter WiFi password",
+  "wifiSnackConnectOk": "Connecting: {ssid}",
+  "@wifiSnackConnectOk": {
+    "placeholders": {
+      "ssid": {
+        "type": "String"
+      }
+    }
+  },
+  "wifiSnackConnectTimeout": "Connection timed out. Check WiFi.",
+  "wifiSnackConnectFail": "Connection failed: {error}",
+  "@wifiSnackConnectFail": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "wifiSnackConnectError": "Connection error: {error}",
+  "@wifiSnackConnectError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "wifiNotConnected": "Not connected",
+  "wifiErrPermission": "Enable location and nearby WiFi permission",
+  "wifiErrListFail": "Failed to load WiFi list: {error}",
+  "@wifiErrListFail": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "btSectionTitle": "Bluetooth",
+  "btPairedListTitle": "Paired / connected (Classic + BLE)",
+  "btPairedEmpty": "No paired devices",
+  "btUnknownDevice": "Unknown device",
+  "btClassicSubtitle": "Classic / {address}",
+  "@btClassicSubtitle": {
+    "placeholders": {
+      "address": {
+        "type": "String"
+      }
+    }
+  },
+  "btBleConnectedLine": "BLE connected / {id}",
+  "@btBleConnectedLine": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "btBlePairedLine": "BLE paired / {id}",
+  "@btBlePairedLine": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "btSearchTitle": "Search devices (Classic + BLE)",
+  "btScanning": "Scanning…",
+  "btScanEmpty": "No devices found",
+  "btUnknownClassic": "Unknown classic device",
+  "btUnknownBle": "Unknown BLE device",
+  "btDialogDisabledTitle": "Bluetooth is off",
+  "btDialogDisabledBody": "Turn on Bluetooth to scan and connect.",
+  "btGoEnable": "Open settings",
+  "btConnected": "Connected",
+  "btConnect": "Connect",
+  "btNameConnectedDevices": "Connected devices",
+  "btSnackClassicConnected": "Classic Bluetooth connected: {name}",
+  "@btSnackClassicConnected": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "btSnackClassicError": "Classic Bluetooth error: {error}",
+  "@btSnackClassicError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "btSnackBleConnected": "BLE connected: {name}",
+  "@btSnackBleConnected": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "btSnackBleAlready": "BLE device already connected",
+  "btSnackBleError": "BLE error: {error}",
+  "@btSnackBleError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "btErrPermission": "Enable Bluetooth permission",
+  "btErrPairedList": "Failed to load paired devices: {error}",
+  "@btErrPairedList": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "btErrScan": "Bluetooth scan failed: {error}",
+  "@btErrScan": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "btErrPair": "Classic pairing failed",
+  "btErrTimeout": "Connection timed out",
+  "btErrConnectFailed": "Connection failed",
+  "btErrClassicAddrEmpty": "Classic address is empty",
+  "btErrBleIdEmpty": "BLE id is empty",
+  "btErrReconnectFailed": "Bluetooth preset reconnect failed: {error}",
+  "@btErrReconnectFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "commErrReconnectFailed": "Reconnect failed: {error}",
+  "@commErrReconnectFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
+}

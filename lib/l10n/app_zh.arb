@@ -1,0 +1,478 @@
+{
+  "@@locale": "zh",
+  "appTitle": "便携式OBS交互程序",
+  "tabHome": "首页",
+  "tabFeature": "功能",
+  "tabForm": "窗体",
+  "tabComm": "通讯",
+  "tabHelp": "帮助",
+  "pageUnderDevelopment": "{tabName} 页面开发中",
+  "@pageUnderDevelopment": {
+    "placeholders": {
+      "tabName": {
+        "type": "String"
+      }
+    }
+  },
+  "commonCancel": "取消",
+  "commonSave": "保存",
+  "commonConnect": "连接",
+  "commonImport": "导入",
+  "commonYes": "是",
+  "commonNo": "否",
+  "homeWorkbench": "工作台",
+  "homeCollectorStatus": "采集器状态",
+  "homeSeismometerAttitude": "地震计姿态信息",
+  "homeInstrumentAttitude": "仪器姿态信息",
+  "homeChamberTp": "舱内温压",
+  "homePowerVoltage": "电源电压",
+  "homeInstrumentClock": "仪器时钟",
+  "homeDataTransmission": "数传信息",
+  "homeSwitchOn": "开",
+  "homeSwitchOff": "关",
+  "homeActionRealtimeWave": "实时波形",
+  "homeActionConfigFile": "配置文件",
+  "homeActionCommSettings": "通讯设置",
+  "homeActionCommLink": "通讯链接",
+  "homeActionGps": "GPS信息",
+  "homeActionLockSwing": "锁摆",
+  "homeActionUnlock": "解锁",
+  "homeTagExternalPower": "外接电源",
+  "homeTagCharging": "正在充电",
+  "homeTagAcousticRelease": "水声释放启动",
+  "homeTagClockInit": "时钟初始化",
+  "homeTagTimedRelease": "时控释放",
+  "homeTagDataLinkModule": "数传模块",
+  "homeTagGpsLock": "GPS锁定",
+  "homeTagGpsSync": "GPS同步",
+  "homeTagCollectStart": "采集启动",
+  "homeTagSensorLock": "传感器锁定",
+  "homeTagFlashOn": "闪光打开",
+  "homeTagGpsOn": "GPS开启",
+  "homePitch": "俯仰角",
+  "homeRoll": "翻滚角",
+  "homeHeading": "方位角",
+  "homeRefresh": "刷新",
+  "homeAdjustAttitude": "调姿",
+  "homeStandardPressure": "标准气压: {hpa}hpa",
+  "@homeStandardPressure": {
+    "placeholders": {
+      "hpa": {
+        "type": "String"
+      }
+    }
+  },
+  "homeChamberPressure": "舱压",
+  "homeChamberTemp": "舱温",
+  "homeBatteryMain": "主电池",
+  "homeBatteryBackup": "备份电池",
+  "homeBatteryAcoustic": "水声电池",
+  "homeDataLinkPort": "数传端口",
+  "homePcTime": "PC",
+  "homePtcTime": "PTC时间",
+  "homeEvery": "每",
+  "homeMinutesAutoRefresh": "分钟自动刷新",
+  "homeDataTxDetail": "链路状态: {link}\nGPS锁定: {gps}\n最后刷新: {time}",
+  "@homeDataTxDetail": {
+    "placeholders": {
+      "link": {
+        "type": "String"
+      },
+      "gps": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "configPageTitle": "配置管理",
+  "configEditCard": "配置编辑",
+  "configHintEditor": "这里编辑/查看配置内容（文本或HEX）",
+  "configLinkStatus": "链路状态: ",
+  "configWifiConnected": "WiFi已连接",
+  "configBtConnected": "蓝牙已连接",
+  "configDisconnected": "未连接",
+  "configOpStatus": "操作状态: {status}",
+  "@configOpStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "configStatusIdle": "未操作",
+  "configBtnDownload": "下载配置文件",
+  "configBtnImport": "导入配置文件",
+  "configBtnUpload": "上传配置文件",
+  "configBtnExport": "导出配置文件",
+  "configDialogImportTitle": "导入配置文件",
+  "configDialogImportHint": "请输入 .cfg 文件路径",
+  "configErrNoChannel": "未检测到可用通信链路，请先在通信管理中连接设备",
+  "configErrConnectFirst": "请先连接设备",
+  "configErrEmptyContent": "当前配置内容为空",
+  "configErrFileNotFound": "文件不存在: {path}",
+  "@configErrFileNotFound": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "configStatusDownloadOk": "下载成功: {bytes} bytes",
+  "@configStatusDownloadOk": {
+    "placeholders": {
+      "bytes": {
+        "type": "String"
+      }
+    }
+  },
+  "configStatusUploadOk": "上传成功: {bytes} bytes",
+  "@configStatusUploadOk": {
+    "placeholders": {
+      "bytes": {
+        "type": "String"
+      }
+    }
+  },
+  "configStatusImportOk": "导入成功: {path}",
+  "@configStatusImportOk": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "configStatusExportOk": "导出成功: {path}",
+  "@configStatusExportOk": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "configStatusFail": "失败: {error}",
+  "@configStatusFail": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "commPageTitle": "通信管理",
+  "commModeTitle": "通信方式",
+  "commWifi": "WiFi",
+  "commBluetooth": "蓝牙",
+  "commPresetTitle": "连接预设",
+  "commPresetHint": "选择并加载预设",
+  "commSavePreset": "保存预设",
+  "commReconnectTitle": "重连设置",
+  "commAutoReconnect": "自动重连",
+  "commRetryCount": "重试次数: {n}",
+  "@commRetryCount": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "commRetryInterval": "间隔: {sec}s",
+  "@commRetryInterval": {
+    "placeholders": {
+      "sec": {
+        "type": "String"
+      }
+    }
+  },
+  "commLinkDevice": "链接设备",
+  "commDisconnectDevice": "断开设备",
+  "commSendStatusQuery": "发送状态查询(CMD_GET_STATUS)",
+  "commDeviceCommands": "设备控制指令",
+  "commLogTitle": "通讯日志",
+  "commLogEmpty": "暂无日志",
+  "commCmdGpsOn": "GPS开",
+  "commCmdGpsOff": "GPS关",
+  "commCmdAdOn": "AD开",
+  "commCmdAdOff": "AD关",
+  "commCmdRdoOn": "数传开",
+  "commCmdRdoOff": "数传关",
+  "commCmdFlashOn": "闪光灯开",
+  "commCmdFlashOff": "闪光灯关",
+  "commDialogWifiTitle": "连接 WiFi 数据通道",
+  "commDeviceIp": "设备IP",
+  "commPort": "端口",
+  "commDialogSavePresetTitle": "保存连接预设",
+  "commPresetName": "预设名称",
+  "commPresetWifiDefault": "WiFi预设-{ts}",
+  "@commPresetWifiDefault": {
+    "placeholders": {
+      "ts": {
+        "type": "String"
+      }
+    }
+  },
+  "commPresetBtDefault": "蓝牙预设-{ts}",
+  "@commPresetBtDefault": {
+    "placeholders": {
+      "ts": {
+        "type": "String"
+      }
+    }
+  },
+  "commSnackPresetSaved": "连接预设已保存",
+  "commSnackReconnectSaved": "重连设置已保存",
+  "commSnackBtReady": "蓝牙链路已可用({name})",
+  "@commSnackBtReady": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "commSnackConnectBtFirst": "请先在蓝牙列表里点击设备“连接”",
+  "commSnackWifiDisconnected": "WiFi 通道已断开",
+  "commSnackBtDisconnected": "蓝牙通道已断开",
+  "commSnackWifiConnected": "WiFi 通道已连接: {host}:{port}",
+  "@commSnackWifiConnected": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      },
+      "port": {
+        "type": "String"
+      }
+    }
+  },
+  "commSnackWifiFailed": "WiFi 通道连接失败: {error}",
+  "@commSnackWifiFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "commSnackPresetLoaded": "已加载预设并连接: {name}",
+  "@commSnackPresetLoaded": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "commSnackPresetBtLoaded": "已加载蓝牙预设并连接: {name}",
+  "@commSnackPresetBtLoaded": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "commSnackSendFailed": "发送失败: {error}",
+  "@commSnackSendFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "commSnackCmdSendFailed": "{title} 发送失败: {error}",
+  "@commSnackCmdSendFailed": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "gpsPageTitle": "GPS信息",
+  "gpsNmeaType": "NMEA语句类型",
+  "gpsSendCommand": "下发指令",
+  "gpsInfoCard": "GPS信息",
+  "gpsMapPlaceholder": "地图区域",
+  "gpsRowGfsdDate": "GFSD日期",
+  "gpsRowUtc": "UTC时间",
+  "gpsRowLon": "经度",
+  "gpsRowLat": "纬度",
+  "gpsRowSpeed": "速度(节)",
+  "gpsRowSatsInUse": "正在使用的卫星",
+  "gpsRowSatsVisible": "非使用的可见卫星",
+  "netErrGeneric": "请求失败",
+  "netErrTimeout": "连接超时",
+  "netErrSendTimeout": "发送超时",
+  "netErrReceiveTimeout": "接收超时",
+  "netErrServer": "服务器异常 {code}",
+  "@netErrServer": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "netErrNetwork": "网络异常",
+  "wifiChartTitle": "波形图",
+  "wifiSectionTitle": "WiFi",
+  "wifiConnectedTitle": "已连接 WiFi",
+  "wifiTooltipRefresh": "刷新",
+  "wifiCurrentNetwork": "当前网络",
+  "wifiCurrentConnection": "当前连接",
+  "wifiPhoneNotConnected": "手机未连接 WiFi",
+  "wifiUnknownNetwork": "未知网络",
+  "wifiOpenNetwork": "开放网络",
+  "wifiDialogConnectTitle": "连接 {ssid}",
+  "@wifiDialogConnectTitle": {
+    "placeholders": {
+      "ssid": {
+        "type": "String"
+      }
+    }
+  },
+  "wifiPasswordHint": "请输入WiFi密码",
+  "wifiSnackEnterPassword": "请输入WiFi密码",
+  "wifiSnackConnectOk": "已发起连接: {ssid}",
+  "@wifiSnackConnectOk": {
+    "placeholders": {
+      "ssid": {
+        "type": "String"
+      }
+    }
+  },
+  "wifiSnackConnectTimeout": "连接超时，请检查设备WiFi是否正常",
+  "wifiSnackConnectFail": "连接失败: {error}",
+  "@wifiSnackConnectFail": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "wifiSnackConnectError": "连接异常: {error}",
+  "@wifiSnackConnectError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "wifiNotConnected": "未连接",
+  "wifiErrPermission": "请开启定位与附近WiFi权限",
+  "wifiErrListFail": "获取WiFi列表失败: {error}",
+  "@wifiErrListFail": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "btSectionTitle": "蓝牙设置",
+  "btPairedListTitle": "已配对/已连接列表(经典+BLE)",
+  "btPairedEmpty": "暂无已配对设备",
+  "btUnknownDevice": "未知设备",
+  "btClassicSubtitle": "经典蓝牙 / {address}",
+  "@btClassicSubtitle": {
+    "placeholders": {
+      "address": {
+        "type": "String"
+      }
+    }
+  },
+  "btBleConnectedLine": "BLE 已连接 / {id}",
+  "@btBleConnectedLine": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "btBlePairedLine": "BLE 已配对 / {id}",
+  "@btBlePairedLine": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "btSearchTitle": "搜索蓝牙设备(经典+BLE)",
+  "btScanning": "正在扫描...",
+  "btScanEmpty": "未扫描到设备",
+  "btUnknownClassic": "未知经典设备",
+  "btUnknownBle": "未知BLE设备",
+  "btDialogDisabledTitle": "蓝牙未开启",
+  "btDialogDisabledBody": "请先开启蓝牙，再进行设备扫描与连接。",
+  "btGoEnable": "去开启",
+  "btConnected": "已连接",
+  "btConnect": "连接",
+  "btNameConnectedDevices": "已连接设备",
+  "btSnackClassicConnected": "经典蓝牙已连接: {name}",
+  "@btSnackClassicConnected": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "btSnackClassicError": "经典蓝牙连接异常: {error}",
+  "@btSnackClassicError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "btSnackBleConnected": "BLE 已连接: {name}",
+  "@btSnackBleConnected": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "btSnackBleAlready": "BLE 设备已连接",
+  "btSnackBleError": "BLE 连接异常: {error}",
+  "@btSnackBleError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "btErrPermission": "请开启蓝牙权限",
+  "btErrPairedList": "获取已配对设备失败: {error}",
+  "@btErrPairedList": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "btErrScan": "蓝牙扫描失败: {error}",
+  "@btErrScan": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "btErrPair": "经典蓝牙配对失败",
+  "btErrTimeout": "连接超时",
+  "btErrConnectFailed": "连接失败",
+  "btErrClassicAddrEmpty": "经典蓝牙地址为空",
+  "btErrBleIdEmpty": "BLE id 为空",
+  "btErrReconnectFailed": "蓝牙预设重连失败: {error}",
+  "@btErrReconnectFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "commErrReconnectFailed": "重连失败: {error}",
+  "@commErrReconnectFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
+}
