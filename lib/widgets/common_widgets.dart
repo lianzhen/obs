@@ -886,7 +886,7 @@ class _BluetoothSectionState extends State<BluetoothSection>
   }) {
     return Container(
       width: double.infinity,
-      color: highlight ? const Color(0xFFE7EEF9) : null,
+      color: highlight ? const Color(0x195789FC) : null,
       padding: EdgeInsets.symmetric(horizontal: 10.w),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,

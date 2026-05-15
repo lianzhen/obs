@@ -8,6 +8,8 @@ import 'package:myflutter/pages/wave_page.dart';
 import 'package:myflutter/l10n/generated/app_localizations.dart';
 import 'package:myflutter/utils/obs_status_center.dart';
 
+import 'communication_manage_page.dart';
+
 abstract final class _HomePageFonts {
   static const int appBarTitle = 34;
   static const int cardTitle = 26;
@@ -59,7 +61,7 @@ class _HomePageState extends State<HomePage> {
     final actions = [
       ActionItem('实时波形', const WavePage(), 'assets/images/boxing.png'),
       ActionItem('配置文件', const ConfigPage(), 'assets/images/peizhi.png'),
-      ActionItem('通讯设置', const CommunicationPage(), 'assets/images/shezhi.png'),
+      ActionItem('通讯设置', const CommunicationManagePage(), 'assets/images/shezhi.png'),
       ActionItem(
         '通讯链接',
         const CommunicationPage(),

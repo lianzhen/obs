@@ -44,6 +44,8 @@ class _CommunicationPageState extends State<CommunicationPage> {
   bool _btReconnecting = false;
   Timer? _statusPollTimer;
 
+  //通信管理
+
   @override
   void initState() {
     super.initState();
