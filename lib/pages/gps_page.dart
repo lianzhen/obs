@@ -131,7 +131,7 @@ class _GpsPageState extends State<GpsPage> {
 
   // 地图控制器：定位变化时跟随移动
   final MapController _mapController = MapController();
-  final double _mapZoom = 15.0;
+  final double _mapZoom = 14.0;
 
   @override
   void initState() {
@@ -449,6 +449,91 @@ class _GpsPageState extends State<GpsPage> {
   }
 
   // ===========================================================
+  // 模拟数据：按当前选中类型生成带 XOR 校验和的标准 NMEA 报文
+  // ===========================================================
+
+  /// 模拟一条当前类型的 NMEA 报文并喂进解析管道
+  void _simulateOneSentence() {
+    final line = _buildSampleNmea(_selectedType);
+    if (line == null) return;
+    _ingestLine(line);
+    if (mounted) setState(() {});
+  }
+
+  /// 生成一条带正确 XOR 校验和的样例 NMEA 报文
+  /// 坐标：北京天安门 (WGS84 ≈ 39.9042°N, 116.4074°E)
+  String? _buildSampleNmea(String type) {
+    final now = DateTime.now().toUtc();
+    final hh = now.hour.toString().padLeft(2, '0');
+    final mm = now.minute.toString().padLeft(2, '0');
+    final ss = now.second.toString().padLeft(2, '0');
+    final time = '$hh$mm$ss.000';
+    // 39.9042 → 39°54.2520'  →  3954.2520
+    const lat = '3954.2520';
+    const ns = 'N';
+    // 116.4074 → 116°24.4440' →  11624.4440
+    const lng = '11624.4440';
+    const ew = 'E';
+    // RMC 用 ddmmyy
+    final dd = now.day.toString().padLeft(2, '0');
+    final mn = now.month.toString().padLeft(2, '0');
+    final yy = (now.year % 100).toString().padLeft(2, '0');
+    final dateRmc = '$dd$mn$yy';
+
+    String? body;
+    switch (type) {
+      case 'GGA':
+        // 时间, 纬度, N, 经度, E, fixQuality=1, satsUsed=08, HDOP=1.2,
+        // 海拔=49.5 M, 大地水准差=0.0 M, , ,
+        body = 'GPGGA,$time,$lat,$ns,$lng,$ew,1,08,1.2,49.5,M,0.0,M,,';
+        break;
+      case 'GLL':
+        // 纬度, N, 经度, E, 时间, A=有效, A=自动
+        body = 'GPGLL,$lat,$ns,$lng,$ew,$time,A,A';
+        break;
+      case 'GSA':
+        // A=自动, 3=3D fix, sat1..sat12, PDOP, HDOP, VDOP
+        body = 'GPGSA,A,3,04,05,07,09,12,15,17,19,24,,,,2.40,1.30,2.00';
+        break;
+      case 'GSV':
+        // 1/1 共1条, 17颗可见, 4 颗示例
+        body =
+            'GPGSV,1,1,17,04,40,083,46,05,17,308,41,07,07,344,39,09,22,228,45';
+        break;
+      case 'RMC':
+        body = 'GPRMC,$time,A,$lat,$ns,$lng,$ew,0.50,90.00,$dateRmc,,,A';
+        break;
+      case 'VTG':
+        body = 'GPVTG,90.00,T,,M,0.50,N,0.93,K,A';
+        break;
+      case 'ZDA':
+        body = 'GPZDA,$time,$dd,$mn,${now.year},00,00';
+        break;
+    }
+    if (body == null) return null;
+    return '\$$body*${_nmeaChecksum(body)}';
+  }
+
+  String _nmeaChecksum(String body) {
+    var x = 0;
+    for (final c in body.codeUnits) {
+      x ^= c;
+    }
+    return x.toRadixString(16).toUpperCase().padLeft(2, '0');
+  }
+
+  /// 一键模拟整组 NMEA 报文：覆盖 GGA / GLL / GSA / GSV / RMC / VTG / ZDA，
+  /// 让 "GPS 信息" 卡片 + 地图位置一次性都被填满。
+  void _simulateBatch() {
+    const types = ['GGA', 'GLL', 'GSA', 'GSV', 'RMC', 'VTG', 'ZDA'];
+    for (final t in types) {
+      final line = _buildSampleNmea(t);
+      if (line != null) _ingestLine(line);
+    }
+    if (mounted) setState(() {});
+  }
+
+  // ===========================================================
   // UI
   // ===========================================================
 
@@ -467,7 +552,9 @@ class _GpsPageState extends State<GpsPage> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     _buildTypeCard(),
-                    SizedBox(height: 20.w),
+                    SizedBox(height: 10.w),
+                    _buildSimulateBar(),
+                    SizedBox(height: 14.w),
                     _buildRawTerminal(),
                     SizedBox(height: 20.w),
                     _buildGpsInfoCard(),
@@ -547,6 +634,67 @@ class _GpsPageState extends State<GpsPage> {
               )
               .toList(),
         ),
+      ),
+    );
+  }
+
+  Widget _buildSimulateBar() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 4.w),
+      child: Row(
+        children: [
+          Expanded(
+            child: OutlinedButton.icon(
+              onPressed: _simulateOneSentence,
+              style: OutlinedButton.styleFrom(
+                padding: EdgeInsets.symmetric(vertical: 12.h),
+                side: const BorderSide(color: Color(0xFF3F73E8)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+              ),
+              icon: Icon(
+                Icons.science_outlined,
+                size: 24.sp,
+                color: const Color(0xFF3F73E8),
+              ),
+              label: Text(
+                '模拟一条 $_selectedType 报文',
+                style: TextStyle(
+                  fontSize: 22.sp,
+                  color: const Color(0xFF3F73E8),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(width: 12.w),
+          Expanded(
+            child: OutlinedButton.icon(
+              onPressed: _simulateBatch,
+              style: OutlinedButton.styleFrom(
+                padding: EdgeInsets.symmetric(vertical: 12.h),
+                side: const BorderSide(color: Color(0xFF3F73E8)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+              ),
+              icon: Icon(
+                Icons.bolt_outlined,
+                size: 24.sp,
+                color: const Color(0xFF3F73E8),
+              ),
+              label: Text(
+                '模拟完整一组',
+                style: TextStyle(
+                  fontSize: 22.sp,
+                  color: const Color(0xFF3F73E8),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
