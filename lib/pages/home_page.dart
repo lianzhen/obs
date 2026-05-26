@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:myflutter/pages/communication_page.dart';
+import 'package:myflutter/l10n/generated/app_localizations.dart';
 import 'package:myflutter/pages/config_page.dart';
 import 'package:myflutter/pages/gps_page.dart';
 import 'package:myflutter/pages/lock_page.dart';
 import 'package:myflutter/pages/wave_page.dart';
-import 'package:myflutter/l10n/generated/app_localizations.dart';
 import 'package:myflutter/utils/obs_status_center.dart';
 
 import 'communication_manage_page.dart';
@@ -64,7 +63,7 @@ class _HomePageState extends State<HomePage> {
       ActionItem('通讯设置', const CommunicationManagePage(), 'assets/images/shezhi.png'),
       ActionItem(
         '通讯链接',
-        const CommunicationPage(),
+        const CommunicationManagePage(),
         'assets/images/lianjie.png',
       ),
 

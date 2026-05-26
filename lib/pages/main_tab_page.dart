@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:myflutter/pages/communication_page.dart';
+import 'package:myflutter/pages/communication_manage_page.dart';
 import 'package:myflutter/pages/home_page.dart';
 import 'package:myflutter/pages/simple_tab_page.dart';
 
@@ -34,7 +34,7 @@ class _MainTabPageState extends State<MainTabPage> {
     HomePage(),
     SimpleTabPage(title: '功能'),
     SimpleTabPage(title: '窗体'),
-    CommunicationPage(),
+    CommunicationManagePage(),
     SimpleTabPage(title: '帮助'),
   ];
 
