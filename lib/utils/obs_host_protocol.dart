@@ -3,26 +3,78 @@ import 'dart:typed_data';
 class ObsHostCommand {
   static const int frameHead = 0x3A;
 
-  static const int cmdGetT = 0x60;
-  static const int cmdGetP = 0x61;
-  static const int cmdBatVolt = 0x62;
-  static const int cmdOpenGps = 0x50;
-  static const int cmdCloseGps = 0x51;
-  static const int cmdStartAd = 0x52;
-  static const int cmdStopAd = 0x53;
-  static const int cmdRdoOn = 0x54;
-  static const int cmdRdoOff = 0x55;
-  static const int cmdLgtOn = 0x58;
-  static const int cmdLgtOff = 0x59;
+  //数据流发给obs
   static const int cmdCfgPut = 0x21;
+
+  //打开GPS
+  static const int cmdOpenGps = 0x50;
+  //关闭GPS
+  static const int cmdCloseGps = 0x51;
+  //波形开
+  static const int cmdStartAd = 0x52;
+  //波形关
+  static const int cmdStopAd = 0x53;
+  //数传-开
+  static const int cmdRdoOn = 0x54;
+  //数传-关
+  static const int cmdRdoOff = 0x55;
+  //时控释放-开
+  static const int cmdTrelOn = 0x56;
+  //时控释放-关
+  static const int cmdTrelOff = 0x57;
+  //闪光灯-开
+  static const int cmdLgtOn = 0x58;
+  //闪光灯-关
+  static const int cmdLgtOff = 0x59;
+  //仪器参数设定
   static const int cmdSetCfg = 0x5A;
-  static const int cmdSaveCfg = 0x5F;
-  static const int cmdGetLevel = 0x64;
-  static const int cmdGetStat = 0x65;
-  static const int cmdGetRtc = 0x66;
-  static const int cmdGetCfg = 0x69;
-  static const int cmdGetStatus = 0x6B;
+  //发送实时数据
   static const int cmdSendRtData = 0x5B;
+  //停止发送实时数据
+  static const int cmdSTPrtData= 0x5C;
+  //初始化RTC
+  static const int cmdSendRtc = 0x5D;
+  //转换模式
+  static const int cmdModelChange = 0x5E;
+  //保存CFG文件
+  static const int cmdSaveCfg = 0x5F;
+  //测试舱内温度
+  static const int cmdGetT = 0x60;
+  //测试舱内气压
+  static const int cmdGetP = 0x61;
+  //测试电池电压
+  static const int cmdBatVolt = 0x62;
+  //启动姿态调整
+  static const int cmdAdjLevel = 0x63;
+  //测试姿态信息
+  static const int cmdGetLevel = 0x64;
+  //发送仪器状态
+  static const int cmdGetStat = 0x65;
+  //发送RTC值
+  static const int cmdGetRtc = 0x66;
+  //读取RTC钟差
+  static const int cmdRtcERR  = 0x67;
+  //GPS 初始化时钟
+  static const int cmdSynRtc  = 0x68;
+  //获取仪器参数
+  static const int cmdGetCfg = 0x69;
+  //读电子罗盘
+  static const int cmdReadCmpAS = 0x6A;
+  //仪器状态
+  static const int cmdGetStatus = 0x6B;
+  //传感器倾角
+  static const int cmdSenLvl= 0x6C;
+  //调整电子罗盘
+  static const int cmdCalCmp= 0x6D;
+  //GPS锁定
+  static const int cmdGpsPos= 0x70;
+  //GPS锁定
+  static const int cmdGpsLock= 0x71;
+  //GPS同步
+  static const int cmdGpsSyn= 0x72;
+  //GPS信息
+  static const int cmdGpsInfo= 0x73;
+
 }
 
 class ObsHostFrame {

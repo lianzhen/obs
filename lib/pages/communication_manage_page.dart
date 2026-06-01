@@ -17,6 +17,8 @@ import 'package:myflutter/utils/bluetooth_transfer_util.dart';
 /// - 顶部：自定义 AppBar（返回 + 标题）
 /// - 通信方式：WiFi / 蓝牙 互斥单选
 /// - WiFi：已连接 WiFi + 可用 WiFi 列表
+///   · 状态监测：定时调用系统接口读取当前 SSID，与用户选择的目标 SSID 对比
+///   · 信号监测：实时读取 RSSI，过低时弹窗提示
 /// - 蓝牙：已配对蓝牙 + 搜索蓝牙设备 列表
 /// - 底部：链接设备
 class CommunicationManagePage extends StatefulWidget {
@@ -43,12 +45,41 @@ class _CommunicationManagePageState extends State<CommunicationManagePage>
 
   // ===== WiFi 状态 =====
   String _connectedSsid = '';
+  /// 当前连接 AP 的 BSSID（MAC），用于辅助标识同一热点
+  String? _connectedBssid;
+  /// 当前连接 AP 的信号强度 RSSI（dBm），数值越大信号越好，如 -50 强于 -80
+  int? _connectedLevel;
   bool _connectedSecure = true;
   List<WifiNetwork> _wifiList = const [];
   WifiNetwork? _selectedWifi;
   bool _wifiLoading = false;
   String _wifiError = '';
   String _wifiConnecting = '';
+
+  /// 【状态监测】用户点击「链接设备」时记录的目标 WiFi 标识（SSID），
+  /// 后续轮询时将系统当前 SSID 与此对比，判断是否连接成功。
+  String _targetWifiSsid = '';
+
+  /// 【状态监测】当前系统 WiFi 是否与 [_targetWifiSsid] 一致（true = 已连上目标设备）
+  bool _wifiTargetMatched = false;
+
+  /// 【状态监测】定时轮询 Timer，每 [_wifiPollInterval] 刷新一次连接与信号
+  Timer? _wifiMonitorTimer;
+
+  /// 【弱信号提示】上次弹出「信号较弱」对话框的时间，用于防抖避免频繁打扰
+  DateTime? _lastWeakSignalAlertAt;
+
+  /// 【弱信号提示】是否正在显示弱信号弹窗，防止轮询叠加多个 Dialog 导致关不掉
+  bool _weakSignalDialogShowing = false;
+
+  /// 【弱信号提示】RSSI 低于此阈值（dBm）视为信号较弱，触发弹窗
+  static const int _weakSignalThresholdDbm = -75;
+
+  /// WiFi 状态轮询间隔
+  static const Duration _wifiPollInterval = Duration(seconds: 4);
+
+  /// 弱信号弹窗最短间隔，避免连续弹出
+  static const Duration _weakSignalAlertCooldown = Duration(minutes: 3);
 
   // ===== 蓝牙状态 =====
   final BluetoothTransferUtil _btTransfer = BluetoothTransferUtil.instance;
@@ -75,14 +106,17 @@ class _CommunicationManagePageState extends State<CommunicationManagePage>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _bootstrap();
     });
+    // 【状态监测】页面打开即启动 WiFi 轮询；实际只在 WiFi 模式下生效
+    _startWifiMonitor();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      // 用户从系统设置回来时刷新
+      // 用户从系统设置回来时刷新，并立即做一次连接/信号检测
       if (_useWifi) {
         _refreshWifi();
+        _pollWifiStatus(silent: true);
       } else {
         _loadBondedBtDevices();
       }
@@ -92,6 +126,8 @@ class _CommunicationManagePageState extends State<CommunicationManagePage>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    // 页面销毁时停止轮询，避免 Timer 泄漏
+    _stopWifiMonitor();
     _bleScanSub?.cancel();
     fbp.FlutterBluePlus.stopScan();
     super.dispose();
@@ -100,10 +136,164 @@ class _CommunicationManagePageState extends State<CommunicationManagePage>
   Future<void> _bootstrap() async {
     if (_useWifi) {
       await _refreshWifi();
+      // 首次进入页面时静默检测一次，不弹错误 Toast
+      await _pollWifiStatus(silent: true);
     } else {
       await _loadBondedBtDevices();
       await _startBtScan();
     }
+  }
+
+  /// 【状态监测】启动 WiFi 定时轮询（每 4 秒检测连接标识 + 信号强度）
+  void _startWifiMonitor() {
+    _wifiMonitorTimer?.cancel();
+    _wifiMonitorTimer = Timer.periodic(_wifiPollInterval, (_) {
+      if (!mounted || !_useWifi) return;
+      _pollWifiStatus();
+    });
+  }
+
+  /// 【状态监测】停止 WiFi 定时轮询
+  void _stopWifiMonitor() {
+    _wifiMonitorTimer?.cancel();
+    _wifiMonitorTimer = null;
+  }
+
+  /// 【状态监测 + 信号监测】核心轮询逻辑：
+  /// 1. 调用 [WiFiForIoTPlugin.getSSID] 获取系统当前连接的 WiFi 标识
+  /// 2. 与 [_targetWifiSsid] 对比，更新 [_wifiTargetMatched] 判断连接是否成功
+  /// 3. 从扫描列表匹配当前 AP，读取 RSSI 并触发弱信号弹窗
+  Future<void> _pollWifiStatus({bool silent = false}) async {
+    if (!_useWifi || !mounted) return;
+    try {
+      final ok = await _ensureWifiPermissions();
+      if (!ok) return;
+
+      // ① 读取系统当前连接的 SSID（设备标识）
+      final current = await WiFiForIoTPlugin.getSSID()
+          .timeout(const Duration(seconds: 5), onTimeout: () => null);
+      final connected = (current ?? '').replaceAll('"', '').trim();
+
+      // ② 从扫描结果中查找当前 AP，获取 RSSI / BSSID
+      int? level;
+      String? bssid;
+      bool secure = true;
+      if (connected.isNotEmpty) {
+        try {
+          final list = await WiFiForIoTPlugin.loadWifiList().timeout(
+            const Duration(seconds: 8),
+            onTimeout: () => <WifiNetwork>[],
+          );
+          WifiNetwork? matchedAp;
+          for (final e in list) {
+            if ((e.ssid ?? '').trim() == connected) {
+              matchedAp = e;
+              break;
+            }
+          }
+          if (matchedAp != null) {
+            level = matchedAp.level;
+            bssid = matchedAp.bssid;
+            secure = _isWifiEncrypted(matchedAp);
+          }
+        } catch (_) {}
+      }
+
+      // ③ 对比当前 SSID 与目标 SSID，判断是否连接成功
+      final matched = _targetWifiSsid.isNotEmpty &&
+          connected.isNotEmpty &&
+          connected == _targetWifiSsid;
+
+      if (!mounted) return;
+      setState(() {
+        _connectedSsid = connected;
+        _connectedBssid = bssid;
+        _connectedLevel = level;
+        _connectedSecure = secure;
+        _wifiTargetMatched = matched;
+      });
+
+      // ④ 信号过低时弹窗提示
+      _maybeAlertWeakSignal(level);
+    } catch (e) {
+      if (!silent && mounted) {
+        setState(() => _wifiError = e.toString());
+      }
+    }
+  }
+
+  /// 【弱信号提示】RSSI 低于 [_weakSignalThresholdDbm] 时弹窗，
+  /// 文案：「WiFi 信号较弱，可能影响数据传输」。
+  /// 防抖：3 分钟内不重复弹；且同一时刻只允许一个弹窗（避免轮询叠层关不掉）。
+  void _maybeAlertWeakSignal(int? level) {
+    if (level == null || !mounted || !_useWifi) return;
+    // 已有弹窗在显示，直接跳过（轮询每 4 秒一次，否则会叠多个 Dialog）
+    if (_weakSignalDialogShowing) return;
+    if (level > _weakSignalThresholdDbm) return;
+    if (_connectedSsid.isEmpty) return;
+
+    final now = DateTime.now();
+    if (_lastWeakSignalAlertAt != null &&
+        now.difference(_lastWeakSignalAlertAt!) < _weakSignalAlertCooldown) {
+      return;
+    }
+
+    // 先占位再异步弹窗，避免 _pollWifiStatus 与 _refreshWifi 并发时重复弹出
+    _lastWeakSignalAlertAt = now;
+    _weakSignalDialogShowing = true;
+    unawaited(_showWeakWifiDialog(level));
+  }
+
+  /// 【弱信号提示】弹出对话框，告知用户信号较弱可能影响传输
+  Future<void> _showWeakWifiDialog(int level) async {
+    try {
+      if (!mounted) return;
+      await showDialog<void>(
+        context: context,
+        // 避免返回键/点击遮罩与多个 Dialog 栈混乱
+        barrierDismissible: true,
+        builder: (ctx) => AlertDialog(
+          title: const Text('WiFi 信号较弱'),
+          content: Text(
+            'WiFi 信号较弱，可能影响数据传输。\n\n'
+            '当前信号：$level dBm\n'
+            '建议靠近设备或检查热点距离。',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('知道了'),
+            ),
+          ],
+        ),
+      );
+    } finally {
+      // 无论用户点「知道了」还是点遮罩关闭，都要释放锁
+      _weakSignalDialogShowing = false;
+    }
+  }
+
+  /// 【UI 辅助】将 RSSI 数值转为可读的信号等级文案
+  String _wifiSignalLabel(int? level) {
+    if (level == null) return '信号未知';
+    if (level >= -55) return '信号强（$level dBm）';
+    if (level >= -70) return '信号良好（$level dBm）';
+    if (level >= -80) return '信号一般（$level dBm）';
+    return '信号较弱（$level dBm）';
+  }
+
+  /// 【UI 辅助】根据当前连接与目标 SSID 对比结果，生成状态描述文案
+  String _wifiLinkStatusText() {
+    if (_connectedSsid.isEmpty) {
+      return _targetWifiSsid.isEmpty ? '未连接' : '未连接到目标 WiFi';
+    }
+    if (_targetWifiSsid.isEmpty) {
+      return '已连接，${_connectedSecure ? '安全' : '开放'}';
+    }
+    if (_wifiTargetMatched) {
+      return '已连接目标设备 · ${_connectedSecure ? '安全' : '开放'}';
+    }
+    return '当前连接「$_connectedSsid」，与目标「$_targetWifiSsid」不一致';
   }
 
   // ============================================================
@@ -169,6 +359,10 @@ class _CommunicationManagePageState extends State<CommunicationManagePage>
               }),
             );
 
+      final matched = _targetWifiSsid.isNotEmpty &&
+          connected.isNotEmpty &&
+          connected == _targetWifiSsid;
+
       // 可用列表去掉已连接的
       final available = cleaned
           .where((e) => (e.ssid ?? '').trim() != connected)
@@ -177,9 +371,13 @@ class _CommunicationManagePageState extends State<CommunicationManagePage>
       if (!mounted) return;
       setState(() {
         _connectedSsid = connected;
+        _connectedBssid = connectedAp?.bssid;
+        _connectedLevel = connectedAp?.level;
         _connectedSecure = connectedAp == null
             ? true
             : _isWifiEncrypted(connectedAp);
+        // 手动刷新时同步更新「是否连上目标设备」状态
+        _wifiTargetMatched = matched;
         _wifiList = available;
         if (_selectedWifi != null) {
           final ssid = _selectedWifi!.ssid;
@@ -188,6 +386,7 @@ class _CommunicationManagePageState extends State<CommunicationManagePage>
           }
         }
       });
+      // 弱信号检测仅由定时轮询 _pollWifiStatus 触发，避免与刷新并发叠多个弹窗
     } catch (e) {
       if (!mounted) return;
       setState(() {
@@ -236,7 +435,11 @@ class _CommunicationManagePageState extends State<CommunicationManagePage>
       }
     }
 
-    setState(() => _wifiConnecting = ssid);
+    setState(() {
+      _wifiConnecting = ssid;
+      // 【状态监测】记录目标 WiFi 标识，连接完成后轮询将与此对比
+      _targetWifiSsid = ssid;
+    });
     try {
       final ok = await WiFiForIoTPlugin.connect(
         ssid,
@@ -247,10 +450,18 @@ class _CommunicationManagePageState extends State<CommunicationManagePage>
         timeoutInSeconds: 15,
       );
       if (!mounted) return;
-      _toast(ok ? '已发起连接：$ssid' : '连接失败：$ssid');
       if (ok) {
+        // 等待系统完成切换后再检测是否真正连上目标 SSID
         await Future.delayed(const Duration(seconds: 1));
         await _refreshWifi();
+        await _pollWifiStatus(silent: true);
+        if (_wifiTargetMatched) {
+          _toast('已连接目标 WiFi：$ssid');
+        } else {
+          _toast('连接已发起，正在等待系统切换网络…');
+        }
+      } else {
+        _toast('连接失败：$ssid');
       }
     } catch (e) {
       if (!mounted) return;
@@ -581,6 +792,8 @@ class _CommunicationManagePageState extends State<CommunicationManagePage>
     });
     if (toWifi) {
       _refreshWifi();
+      // 切回 WiFi 模式后立即做一次连接/信号检测
+      _pollWifiStatus(silent: true);
     } else {
       _loadBondedBtDevices();
       _startBtScan();
@@ -747,13 +960,30 @@ class _CommunicationManagePageState extends State<CommunicationManagePage>
     );
   }
 
+  /// 「已连接 WiFi」卡片：展示 SSID、目标对比状态、实时信号强度
   Widget _buildConnectedWifiTile() {
     final hasConn = _connectedSsid.isNotEmpty;
+    // 已连上目标设备用蓝色，连了别的网络用橙色，未连用灰色
+    final titleColor = !hasConn
+        ? Colors.black54
+        : (_wifiTargetMatched && _targetWifiSsid.isNotEmpty)
+            ? _primaryBlue
+            : (_targetWifiSsid.isNotEmpty ? Colors.orange.shade800 : _primaryBlue);
+    final wifiIconColor = !hasConn
+        ? Colors.black26
+        : (_connectedLevel != null && _connectedLevel! <= _weakSignalThresholdDbm)
+            ? Colors.orange
+            : Colors.black87;
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8.r),
-        border: Border.all(color: _itemBorder),
+        border: Border.all(
+          color: _wifiTargetMatched && _targetWifiSsid.isNotEmpty
+              ? _primaryBlue.withValues(alpha: 0.5)
+              : _itemBorder,
+        ),
       ),
       padding: EdgeInsets.symmetric(horizontal: 22.w, vertical: 18.w),
       child: Row(
@@ -767,26 +997,62 @@ class _CommunicationManagePageState extends State<CommunicationManagePage>
                   style: TextStyle(
                     fontSize: 28.sp,
                     fontWeight: FontWeight.w600,
-                    color: hasConn ? _primaryBlue : Colors.black54,
+                    color: titleColor,
                   ),
                 ),
                 SizedBox(height: 6.w),
+                // 【状态监测】连接状态文案（含目标对比结果）
                 Text(
-                  hasConn
-                      ? '已连接，${_connectedSecure ? '安全' : '开放'}'
-                      : '请连接 WiFi 后使用',
+                  hasConn ? _wifiLinkStatusText() : '请连接 WiFi 后使用',
                   style: TextStyle(
                     fontSize: 22.sp,
                     color: _hintTextColor,
                   ),
                 ),
+                if (hasConn) ...[
+                  SizedBox(height: 4.w),
+                  // 【信号监测】实时 RSSI 等级
+                  Text(
+                    _wifiSignalLabel(_connectedLevel),
+                    style: TextStyle(
+                      fontSize: 20.sp,
+                      color: (_connectedLevel != null &&
+                              _connectedLevel! <= _weakSignalThresholdDbm)
+                          ? Colors.orange.shade800
+                          : _hintTextColor,
+                    ),
+                  ),
+                  // 【状态监测】展示 BSSID 作为 AP 的物理标识，辅助确认连的是同一热点
+                  if (_connectedBssid != null && _connectedBssid!.isNotEmpty)
+                    Padding(
+                      padding: EdgeInsets.only(top: 2.w),
+                      child: Text(
+                        'BSSID $_connectedBssid',
+                        style: TextStyle(
+                          fontSize: 18.sp,
+                          color: _hintTextColor.withValues(alpha: 0.8),
+                        ),
+                      ),
+                    ),
+                ],
+                if (_targetWifiSsid.isNotEmpty && _wifiTargetMatched) ...[
+                  SizedBox(height: 6.w),
+                  Text(
+                    '✓ 已与目标设备匹配',
+                    style: TextStyle(
+                      fontSize: 20.sp,
+                      color: _primaryBlue,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
           Icon(
             Icons.wifi,
             size: 38.sp,
-            color: hasConn ? Colors.black87 : Colors.black26,
+            color: wifiIconColor,
           ),
         ],
       ),
