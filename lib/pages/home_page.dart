@@ -929,17 +929,18 @@ class _SeismoOutlineButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final radius = BorderRadius.circular(8.w);
     return Material(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(4.w),
+      color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(4.w),
-        child: Container(
+        borderRadius: radius,
+        splashColor: _blue.withValues(alpha: 0.12),
+        highlightColor: _blue.withValues(alpha: 0.08),
+        child: Ink(
           height: 56.w,
-          alignment: Alignment.center,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8.w),
+            borderRadius: radius,
             border: Border.all(color: _blue, width: 1.w),
             color: Colors.white,
           ),
@@ -1108,33 +1109,42 @@ class ActionButton extends StatelessWidget {
   final ActionItem item;
   final VoidCallback onTap;
 
+  static const Color _blue = Color(0xFF4E86FF);
+
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: SizedBox(
-        width: double.infinity,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(
-              width: 80.w,
-              height: 80.w,
-              child: Image.asset(item.imageAsset, fit: BoxFit.contain),
-            ),
-            SizedBox(height: 18.w),
-            Text(
-              item.label,
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontSize: _HomePageFonts.workbenchLabel.sp,
-                color: const Color(0xFF323232),
+    final radius = BorderRadius.circular(8.w);
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: radius,
+        splashColor: _blue.withValues(alpha: 0.12),
+        highlightColor: _blue.withValues(alpha: 0.08),
+        child: SizedBox(
+          width: double.infinity,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: 80.w,
+                height: 80.w,
+                child: Image.asset(item.imageAsset, fit: BoxFit.contain),
               ),
-            ),
-          ],
+              SizedBox(height: 18.w),
+              Text(
+                item.label,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: _HomePageFonts.workbenchLabel.sp,
+                  color: const Color(0xFF323232),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
