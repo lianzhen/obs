@@ -50,8 +50,39 @@ class _HomePageState extends State<HomePage> {
   }
 
   String _voltagePercent(double value, {double full = 12.6}) {
-    final p = ((value / full) * 100).clamp(0, 100).toStringAsFixed(0);
-    return '$p%';
+    final p = ((value / full) * 100).clamp(0, 100);
+    return '${p.toStringAsFixed(1)}%';
+  }
+
+  Future<void> _simulateFetchingDialog({VoidCallback? onComplete}) async {
+    if (!mounted) return;
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => PopScope(
+        canPop: false,
+        child: AlertDialog(
+          content: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: 36.w,
+                height: 36.w,
+                child: const CircularProgressIndicator(strokeWidth: 2.5),
+              ),
+              SizedBox(width: 20.w),
+              Text(
+                '正在获取...',
+                style: TextStyle(fontSize: _HomePageFonts.cardTitle.sp),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    await Future<void>.delayed(const Duration(seconds: 2));
+    if (mounted) Navigator.of(context).pop();
+    onComplete?.call();
   }
 
   @override
@@ -133,6 +164,8 @@ class _HomePageState extends State<HomePage> {
                           ),
                           pitchDeg: st.seisPitchDeg,
                           rollDeg: st.seisRollDeg,
+                          onRefresh: _statusCenter.simulateSeisAttitudeUpdate,
+                          onAdjust: _statusCenter.simulateSeisAttitudeUpdate,
                         ),
                         SizedBox(height: 20.w),
                         _InstrumentAttitudeCard(
@@ -143,6 +176,8 @@ class _HomePageState extends State<HomePage> {
                           pitchDeg: st.pitchDeg,
                           rollDeg: st.rollDeg,
                           headingDeg: st.headingDeg,
+                          onRefresh: _statusCenter.simulateInstrumentAttitudeUpdate,
+                          onAdjust: _statusCenter.simulateInstrumentAttitudeUpdate,
                         ),
                         SizedBox(height: 20.w),
                         _ChamberTpCard(
@@ -153,6 +188,9 @@ class _HomePageState extends State<HomePage> {
                           standardPressureHpa: st.standardPressureHpa,
                           chamberTempC: st.chamberTempC,
                           chamberPressureMpa: st.chamberPressureMpa,
+                          onRefresh: () => _simulateFetchingDialog(
+                            onComplete: _statusCenter.applyChamberTpMicroUpdate,
+                          ),
                         ),
                         SizedBox(height: 15.w),
                         _PowerVoltageCard(
@@ -163,6 +201,9 @@ class _HomePageState extends State<HomePage> {
                           mainPct: _voltagePercent(st.mainBatteryV),
                           backupPct: _voltagePercent(st.backupBatteryV),
                           acousticPct: _voltagePercent(st.acousticBatteryV),
+                          onRefresh: () => _simulateFetchingDialog(
+                            onComplete: _statusCenter.applyPowerVoltageMicroUpdate,
+                          ),
                         ),
                         SizedBox(height: 15.w),
                         _InstrumentClockCard(
@@ -467,12 +508,16 @@ class _SeismometerAttitudeCard extends StatelessWidget {
     required this.onToggle,
     required this.pitchDeg,
     required this.rollDeg,
+    required this.onRefresh,
+    required this.onAdjust,
   });
 
   final bool expanded;
   final VoidCallback onToggle;
   final double pitchDeg;
   final double rollDeg;
+  final VoidCallback onRefresh;
+  final VoidCallback onAdjust;
 
   @override
   Widget build(BuildContext context) {
@@ -493,7 +538,7 @@ class _SeismometerAttitudeCard extends StatelessWidget {
                 child: _SeismoOutlineButton(
                   icon: 'assets/images/shuaxin.png',
                   label: '刷新',
-                  onTap: () {},
+                  onTap: onRefresh,
                 ),
               ),
               SizedBox(width: 37.w),
@@ -501,7 +546,7 @@ class _SeismometerAttitudeCard extends StatelessWidget {
                 child: _SeismoOutlineButton(
                   icon: 'assets/images/tiaozi.png',
                   label: '调姿',
-                  onTap: () {},
+                  onTap: onAdjust,
                 ),
               ),
             ],
@@ -519,6 +564,8 @@ class _InstrumentAttitudeCard extends StatelessWidget {
     required this.pitchDeg,
     required this.rollDeg,
     required this.headingDeg,
+    required this.onRefresh,
+    required this.onAdjust,
   });
 
   final bool expanded;
@@ -526,6 +573,8 @@ class _InstrumentAttitudeCard extends StatelessWidget {
   final double pitchDeg;
   final double rollDeg;
   final double headingDeg;
+  final VoidCallback onRefresh;
+  final VoidCallback onAdjust;
 
   @override
   Widget build(BuildContext context) {
@@ -554,7 +603,7 @@ class _InstrumentAttitudeCard extends StatelessWidget {
                 child: _SeismoOutlineButton(
                   icon: 'assets/images/shuaxin.png',
                   label: '刷新',
-                  onTap: () {},
+                  onTap: onRefresh,
                 ),
               ),
               SizedBox(width: 10.w),
@@ -562,7 +611,7 @@ class _InstrumentAttitudeCard extends StatelessWidget {
                 child: _SeismoOutlineButton(
                   icon: 'assets/images/tiaozi.png',
                   label: '调姿',
-                  onTap: () {},
+                  onTap: onAdjust,
                 ),
               ),
             ],
@@ -580,6 +629,7 @@ class _ChamberTpCard extends StatelessWidget {
     required this.standardPressureHpa,
     required this.chamberTempC,
     required this.chamberPressureMpa,
+    required this.onRefresh,
   });
 
   final bool expanded;
@@ -587,6 +637,7 @@ class _ChamberTpCard extends StatelessWidget {
   final double standardPressureHpa;
   final double chamberTempC;
   final double chamberPressureMpa;
+  final VoidCallback onRefresh;
 
   @override
   Widget build(BuildContext context) {
@@ -613,7 +664,7 @@ class _ChamberTpCard extends StatelessWidget {
             child: _SeismoOutlineButton(
               icon: 'assets/images/shuaxin.png',
               label: '刷新',
-              onTap: () {},
+              onTap: onRefresh,
             ),
           ),
         ],
@@ -629,6 +680,7 @@ class _PowerVoltageCard extends StatelessWidget {
     required this.mainPct,
     required this.backupPct,
     required this.acousticPct,
+    required this.onRefresh,
   });
 
   final bool expanded;
@@ -636,6 +688,7 @@ class _PowerVoltageCard extends StatelessWidget {
   final String mainPct;
   final String backupPct;
   final String acousticPct;
+  final VoidCallback onRefresh;
 
   @override
   Widget build(BuildContext context) {
@@ -657,7 +710,7 @@ class _PowerVoltageCard extends StatelessWidget {
             child: _SeismoOutlineButton(
               icon: 'assets/images/shuaxin.png',
               label: '刷新',
-              onTap: () {},
+              onTap: onRefresh,
             ),
           ),
         ],

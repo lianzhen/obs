@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 
@@ -137,6 +138,63 @@ class ObsStatusCenter {
       } catch (_) {}
     }
     return const {};
+  }
+
+  /// 模拟刷新/调姿：地震计姿态各角度 +1
+  void simulateSeisAttitudeUpdate() {
+    final old = status.value;
+    status.value = old.copyWith(
+      seisPitchDeg: old.seisPitchDeg + 1,
+      seisRollDeg: old.seisRollDeg + 1,
+      updatedAt: DateTime.now().toUtc(),
+    );
+  }
+
+  /// 模拟刷新/调姿：仪器姿态各角度 +1
+  void simulateInstrumentAttitudeUpdate() {
+    final old = status.value;
+    status.value = old.copyWith(
+      pitchDeg: old.pitchDeg + 1,
+      rollDeg: old.rollDeg + 1,
+      headingDeg: old.headingDeg + 1,
+      updatedAt: DateTime.now().toUtc(),
+    );
+  }
+
+  /// 刷新后微小波动：舱温 ±0.05℃，舱压 ±0.0005MPa，标准气压 ±0.02hpa
+  void applyChamberTpMicroUpdate() {
+    final old = status.value;
+    final r = Random();
+    status.value = old.copyWith(
+      chamberTempC: double.parse(
+        (old.chamberTempC + (r.nextDouble() * 0.1 - 0.05))
+            .clamp(0.0, double.infinity)
+            .toStringAsFixed(1),
+      ),
+      chamberPressureMpa: double.parse(
+        (old.chamberPressureMpa + (r.nextDouble() * 0.001 - 0.0005))
+            .clamp(0.0, double.infinity)
+            .toStringAsFixed(3),
+      ),
+      standardPressureHpa: double.parse(
+        (old.standardPressureHpa + (r.nextDouble() * 0.04 - 0.02))
+            .toStringAsFixed(2),
+      ),
+      updatedAt: DateTime.now().toUtc(),
+    );
+  }
+
+  /// 刷新后微小波动：三块电池电压各 ±0.03V
+  void applyPowerVoltageMicroUpdate() {
+    final old = status.value;
+    final r = Random();
+    double jitter() => r.nextDouble() * 0.06 - 0.03;
+    status.value = old.copyWith(
+      mainBatteryV: (old.mainBatteryV + jitter()).clamp(0.0, 12.6),
+      backupBatteryV: (old.backupBatteryV + jitter()).clamp(0.0, 12.6),
+      acousticBatteryV: (old.acousticBatteryV + jitter()).clamp(0.0, 12.6),
+      updatedAt: DateTime.now().toUtc(),
+    );
   }
 
   static bool _boolValue(dynamic v, bool fallback) {
